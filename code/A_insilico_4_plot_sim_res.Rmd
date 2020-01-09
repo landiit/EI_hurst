@@ -1,0 +1,102 @@
+---
+title: "Plot simulation results"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+```{r, warning=FALSE, message=FALSE}
+library(easypackages)
+libraries("here","ggplot2","reshape")
+
+fontSize = 18
+
+fstem_oof = "oof"
+file2use = here("ephys_sim",sprintf("Hsim_%s.csv",fstem_oof))
+data_oof = read.csv(file2use)
+```
+
+Plot simulation results of H on simulated 1/f data.
+
+```{r, warning=FALSE, message=FALSE}
+y_limits = c(1.4,2)
+labelidx2use = c(1,6,11,16,21)
+
+melted_data_oof = melt(data_oof, id.vars = c("legend_labels","oof"))
+
+p = ggplot(data = melted_data_oof, aes(x = legend_labels, y = value, colour = variable))
+p = p + geom_point() + geom_smooth() + guides(colour = FALSE)
+p = p + scale_x_continuous(breaks=data_oof$legend_labels[labelidx2use], labels=data_oof$legend_labels[labelidx2use])
+p = p + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+p = p + xlab("1/f slope in LFP data") + ylab("H") + ggtitle("Simulated LFP (1/f only)")
+p = p + theme(plot.title = element_text(hjust = 0.5))
+p = p + theme(axis.text.x = element_text(size=fontSize),
+        axis.text.y = element_text(size=fontSize),
+        axis.title.x = element_text(size=fontSize),
+        axis.title.y = element_text(size=fontSize),
+        strip.text.x = element_text(size=fontSize),
+        plot.title = element_text(size=fontSize))
+ggsave(filename = here("figures",sprintf("Hsim_%s_lfp_bold.pdf",fstem_oof)))
+p
+```
+
+Plot results of Gao et al., model with H as output.
+
+```{r, warning=FALSE, message=FALSE}
+labelidx2use = c(1,6,11,16,21)
+
+ei_data = read.csv(here("ephys_sim","EIsim_H.csv"))
+nchannels = 128
+ei_H_plot = ggplot(data = ei_data, aes(x = EIratio, y = channel_001))
+for (ichan in 1:nchannels){
+  chan_name = sprintf("channel_%03d",ichan)
+  ei_H_plot = ei_H_plot + geom_line(aes_string(y=chan_name), alpha = 0.3, colour = "grey60")  
+}
+ei_data$mean_H = rowMeans(ei_data[,3:ncol(ei_data)])
+ei_H_plot = ei_H_plot + geom_smooth(data = ei_data, aes(y=ei_data$mean_H))
+ei_H_plot = ei_H_plot + scale_x_continuous(breaks=ei_data$EIratio[labelidx2use],
+                                           labels=ei_data$EIratio[labelidx2use])
+ei_H_plot = ei_H_plot + xlab( expression(paste( g == g[I]/g[E])) ) + ylab("H") + ggtitle("Ratio of synaptic conductances")
+ei_H_plot = ei_H_plot + theme(plot.title = element_text(hjust = 0.5))
+ei_H_plot = ei_H_plot + theme(axis.text.x = element_text(size=fontSize),
+        axis.text.y = element_text(size=fontSize),
+        axis.title.x = element_text(size=fontSize),
+        axis.title.y = element_text(size=fontSize),
+        strip.text.x = element_text(size=fontSize),
+        plot.title = element_text(size=fontSize))
+ei_H_plot = ei_H_plot + scale_x_reverse()
+ggsave(filename = here("figures","EIsim_H_plot.pdf"))
+ei_H_plot
+
+
+
+
+labelidx2use = c(1,6,11,16,21)
+
+ei_data = read.csv(here("ephys_sim","EIsim_oof.csv"))
+nchannels = 128
+ei_oof_plot = ggplot(data = ei_data, aes(x = EIratio, y = channel_001))
+for (ichan in 1:nchannels){
+  chan_name = sprintf("channel_%03d",ichan)
+  ei_oof_plot = ei_oof_plot + geom_line(aes_string(y=chan_name), alpha = 0.3, colour = "grey60")  
+}
+ei_data$mean_H = rowMeans(ei_data[,3:ncol(ei_data)])
+ei_oof_plot = ei_oof_plot + geom_smooth(data = ei_data, aes(y=ei_data$mean_H))
+ei_oof_plot = ei_oof_plot + scale_x_continuous(breaks=ei_data$EIratio[labelidx2use],
+                                               labels=ei_data$EIratio[labelidx2use])
+ei_oof_plot = ei_oof_plot + xlab( expression(paste( g == g[I]/g[E])) ) + ylab("1/f slope") + ggtitle("Ratio of synaptic conductances")
+ei_oof_plot = ei_oof_plot + theme(plot.title = element_text(hjust = 0.5))
+ei_oof_plot = ei_oof_plot + theme(axis.text.x = element_text(size=fontSize),
+        axis.text.y = element_text(size=fontSize),
+        axis.title.x = element_text(size=fontSize),
+        axis.title.y = element_text(size=fontSize),
+        strip.text.x = element_text(size=fontSize),
+        plot.title = element_text(size=fontSize))
+ei_oof_plot = ei_oof_plot + scale_x_reverse()
+ggsave(filename = here("figures","EIsim_oof_plot.pdf"))
+ei_oof_plot
+```
