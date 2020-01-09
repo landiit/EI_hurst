@@ -16,7 +16,7 @@ libraries("nlme","ggplot2","here","matlabr","reshape2")
 
 # define paths
 codepath = here("code")
-phenopath  = here("DREADDinhibition", "pheno")
+phenopath  = here("DREADDsilencing", "pheno")
 ```
 
 ## Run MATLAB code to estimate H
