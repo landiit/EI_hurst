@@ -1,8 +1,8 @@
 # Code and data for EI Hurst paper
 
-This repository has all the code and tidy data for the analyses in Trakoshis et al.,
+This repository has all the code and tidy data for the analyses in Trakoshis et al., https://doi.org/10.1101/2020.01.16.909531
 
-The code directory has all of the code for running the primary analyses. The analyses are split into 3 sections A, B, and C, and these are denoted at the beginning of each filename. Section A is the code for running in-silico modeling of the Gao et al., model. The code for the recurrent network model is located here: https://github.com/pablomc88/EEG_proxy_from_network_point_neurons.  Section B is for running in-vivo DREADD analyses. Section C is for running analyses on human rsfMRI data. Other code that these main scripts depend on are also in this directory.
+The code directory has all of the code for running the primary analyses. The analyses are split into 3 sections A, B, and C, and these are denoted at the beginning of each filename. Section A is the code for running in-silico modeling of the Gao et al., model. The code for the recurrent network model is located here: https://github.com/pablomc88/EEG_proxy_from_network_point_neurons.  Section B is for running in-vivo DREADD analyses. Section C is for running analyses on human rsfMRI data. Other code that these main scripts depend on are also in this directory. Section D is for running the genomic analyses.
 
 The data directory houses tidy data generated for each step.
 
@@ -27,7 +27,7 @@ The data directory houses tidy data generated for each step.
 
   + **R libraries**
 
-  **```c("here","ggplot2","patchwork","matlabr","nlme","reshape2","readxl","psych","ggseg","heplots")```**
+  **```c("here","ggplot2","patchwork","matlabr","nlme","reshape2","readxl","psych","ggseg","heplots","gplots")```**
 
   + **patchwork** (https://github.com/thomasp85/patchwork) - for putting together multiple ggplots.
 
@@ -78,3 +78,7 @@ The data directory houses tidy data generated for each step.
 * `C_2_AIMS_Hurst_Univariate.Rmd` runs in RStudio and does the main univariate analysis on H data. It runs all the stats for the sex-by-diagnosis interaction effect and other main effects, produces plots, and shows the results tables. It produces the `C_2_AIMS_Hurst_Univariate.html` report that can be found in the `code` directory.
 
 * `C_3_AIMS_Hurst_PLS.Rmd` runs in RStudio and will run `C_3a_AIMS_Hurst_PLS.m` in `MATLAB` as the primary analysis of PLS on the rsfMRI data. The rest of the `C_3_AIMS_Hurst_PLS.Rmd` will make plots and produces the `C_3_AIMS_Hurst_PLS.html` report found in the `code` directory.
+
+### Genomic analyses
+
+* `D_asd_risk_genes_dht_de_overlap.Rmd` runs in RStudio and does the main enrichment analyses between autism-associated genes in different cell types and DHT DE genes.
