@@ -84,10 +84,6 @@ The code directory has all of the code for running the primary analyses. The ana
 * `D_asd_risk_genes_dht_de_overlap.Rmd` runs in RStudio and does the main enrichment analyses between autism-associated genes in different cell types and DHT DE genes.
 
 
-### Figures
-
-There is a `Figures.Rmd` script that reproduces Figures 1-3 and Supplementary Figures 1-5. Figures 4 and 5 were constructed manually. All of these figures are in the `figures` directory.
-
 ### Data
 
 Inside the `data` directory are subdirectories with the tidy data needed for the different aspects of the analyses. The names and filenames should be pretty self-explanatory and they get used at various points in the code.
