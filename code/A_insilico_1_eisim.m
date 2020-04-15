@@ -12,7 +12,7 @@ function result = A_insilico_1_eisim(EI_ratio, MAKE_PLOT)
 %
 
 %%
-outpath = '/Users/mvlombardo/projects/EI_hurst/reproAnalysis/ephys_sim';
+outpath = '/Users/mlombardo/Dropbox/Manuscript/AIMS_Hurst/Sex/reproAnalysis/github_repo/data/gao_model';
 
 %% set up simulation
 dt = 0.001; %simulation time step
@@ -63,6 +63,22 @@ for i = 1:length(EI_ratio)
 end % for i
 
 
+%% compute PSDs & fit
+%oscillation mask
+o_filt = ones(fs/2+1,1);
+o_filt(9:13) = 1+4*gausswin(5); %alpha
+o_filt(18:25) = 1+1.5*gausswin(8); %beta
+
+o_mask = repmat(o_filt,[1, length(EI_ratio)]); %oscillation mask
+for i = 1:size(LFP,3)
+    %include oscillation
+    PSD(:,:,i) = mPSD(LFP(:,:,i),fs,fs,fs/2,fs/2).*o_mask;
+             
+    rbf = robfitPSD(PSD(:,:,i),30:50,1); %robust fit    
+    slope(:,i) = rbf(:,2);
+end % for
+
+
 if MAKE_PLOT
     % plot relationship between mean H across all regions and E:I ratio
     figure; set(gcf,'color','white');
@@ -81,6 +97,11 @@ for i = 1:num_trs
     varnames{i} = sprintf('channel_%03d',i);
 end % for i
 varnames = [{'EIlabels','EIratio'}, varnames];
+
+
+tab2write = cell2table([leg_labels', num2cell([EI_ratio', slope])],'VariableNames',varnames);
+fname2save = fullfile(outpath,'EIsim_oof.csv');
+writetable(tab2write, fname2save, 'FileType','text','delimiter',',');
 
 tab2write = cell2table([leg_labels', num2cell([EI_ratio', H'])],'VariableNames',varnames);
 fname2save = fullfile(outpath,'EIsim_H.csv');
@@ -147,4 +168,123 @@ spk_times(spk_times>sim_t)=[];
 bins = (0:dt:sim_t)+dt/2; %make discretizing bins
 discretized = hist(spk_times,bins);
 end % function pois_spikes
+
+
+
+%%
+function [output, output_time, output_f] = stft(timestamp, data, Fs, winLen, stepLen, end_freq)
+%function [output, output_time, output_f] = stft(timestamp, data, Fs, winLen, stepLen, end_freq)
+% performs short-time windowed fourier transform on data, with a hamming
+% window applied. Basically does the same thing as spectrogram.m
+% 
+% timestamp: leave blank []
+% data: time series
+% Fs: sampling frequency of the data
+% winLen: window length in number of samples (use same number as Fs)
+% stepLen: step length in number of samples (use about 1/50 as Fs (or 10 samples)
+% end_freq (optional): cut of frequency of stft, default is fs/2
+
+if isempty(timestamp)
+   timestamp = linspace(1/Fs,size(data,1)/Fs, size(data,1)); 
+end
+%winLen=Fs;
+max_iter = ceil((size(data,1)-winLen)/stepLen);
+%preallocate output 
+output_time = zeros(max_iter,1);
+output_f = linspace(0,Fs-Fs/winLen, winLen);
+if isempty(end_freq)
+    end_ind = length(output_f);
+else
+    end_ind = find(output_f>end_freq,1)-1; %find index
+end
+output_f=output_f(1:end_ind);
+    
+output = zeros(end_ind, size(data,2), max_iter);
+H = hamming(winLen);
+HAM = repmat(H./sqrt(sum(H.^2)),1,size(data,2));
+
+%%%stepping through
+for i=1:max_iter
+    %dc offset    
+    cur_window = data((1:winLen)+(i-1)*stepLen,:)/sqrt(winLen);
+    cur_window = (cur_window - repmat(mean(cur_window,1),winLen,1)).*HAM;         
+    output_time(i)=timestamp(winLen+(i-1)*stepLen);    
+    F = fft(cur_window);
+    %use multitaper
+    %F = pmtm(cur_window,4,winLen,Fs);
+    output(:,:,i) = (F(1:end_ind,:));
+    %output(:,:,i) = abs(F(1:end_ind,:));
+
+    %output(:,i)=step_features(cur_window, FREQS);
+end % for i
+end % function stft
+
+
+
+%%
+function [PSD, Fa] = mPSD(data, Fs, winLen, stepLen, end_freq)
+%function mPSD(data, Fs, winLen, stepLen, end_freq)
+% computes median of stft, colloquially referred to as median welch.
+% Basically it does the exact same thing as welch's method, but takes
+% median instead of the mean, because median is robust to huge outliers and
+% spectral data is non-uniformly distributed
+%
+% data: time series
+% Fs: sampling frequency of the data
+% winLen: window length in number of samples (use same number as Fs)
+% stepLen: step length in number of samples (use about 1/50 as Fs (or 10 samples)
+% end_freq (optional): cut of frequency of stft, default is fs/2
+% PSD: returns median PSD
+% Fa: returns frequency axis
+
+if size(data,1)<size(data,2)
+    data = data';
+end
+
+[F, Ft, Fa] = stft([], data, Fs, winLen, stepLen, end_freq);
+PSD = median(abs(F).^2,3);
+end % function mPSD
+
+
+%%
+function [fitparam, fiterr] = robfitPSD(PSD,freqs,dF)
+%[fitparam, fiterr]= robfitPSD(PSD,freqs,dF)
+% performs robust fit on PSD, over specifed frequency regions
+%
+%   PSD: can be 1,2 or 3D, must start from 0Hz
+%       if 1D, will automatically rotate to have long axis as frequency
+%       if 2D, needs to be []
+%       if 3D, needs to be [X,Y,freq], where X & Y can be trial or time
+%   freq: the frequency range to fit, should be at dF resolution
+%   dF: is the frequency resolution of PSD [default 1]
+
+if nargin == 2
+    dF=1;
+end
+if length(size(PSD))==2
+    %2D matrix, check if really 1D
+    if any(size(PSD)==1)
+       %really 1D, long axis is freq 
+       if size(PSD,2)>size(PSD,1)
+           PSD = PSD';
+       end
+    end
+    PSD = permute(PSD,[2 3 1]); %expand into 3D array
+end
+[LX LY ~] = size(PSD);
+fitparam = zeros(LX, LY, 2);
+fiterr = zeros(LX, LY);
+%fitInds = (round(freqs(1)/dF):round(freqs(end)/dF))+1;
+fitInds = round(freqs/dF)+1; % find indices of PSD to fit over, corresponding to freqs
+for xx = 1:LX
+    for yy = 1:LY
+        % perform fit and retrieve error
+        [fitparam(xx,yy,:), temp] = robustfit(log10((fitInds-1)*dF),log10(squeeze(PSD(xx,yy,fitInds))));
+        fiterr(xx,yy) = temp.ols_s;
+    end
+end
+fitparam = squeeze(fitparam);
+fiterr = squeeze(fiterr);
+end % function robfitPSD
+
 

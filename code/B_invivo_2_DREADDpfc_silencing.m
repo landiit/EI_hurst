@@ -1,11 +1,11 @@
 % B_invivo_2_DREADDpfc_silencing.m
 
 % add nonfractal toolbox to MATLAB path
-addpath /Users/mvlombardo/Dropbox/matlab/nonfractal-master/m;
+addpath /Users/mlombardo/Dropbox/matlab/nonfractal-master/m;
 
 %% load in pheno data
-rootpath = '/Users/mvlombardo/Dropbox/Manuscripts/AIMS_Hurst_Sex/reproAnalysis/DREADDsilencing';
-datapath = '/Users/mvlombardo/Dropbox/data/ag_EI_DREADD_data/DREADDsilencing/raw';
+rootpath = '/Users/mlombardo/Dropbox/Manuscripts/AIMS_Hurst_Sex/reproAnalysis/DREADDsilencing';
+datapath = '/Users/mlombardo/Dropbox/data/ag_EI_DREADD_data/DREADDsilencing/raw';
 pheno_path = fullfile(rootpath,'pheno');
 pdata = readtable(fullfile(pheno_path,'tidy_pheno_data.csv'),'delimiter',',');
 

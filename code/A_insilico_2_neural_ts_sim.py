@@ -26,7 +26,7 @@ oof_range = np.arange(start = 0,stop = 2.1,step = 0.1, dtype= float)*-1
 oof_range[0] = 0
 
 # some settings for where to save the data, filename stem, and peaks for oscillations
-resultdir = "/Users/mvlombardo/projects/EI_hurst/reproAnalysis/ephys_sim/"
+resultdir = "/Users/mlombardo/Dropbox/Manuscripts/AIMS_Hurst_Sex/github_repo/data/gao_model"
 
 # loop over range of 1/f slopes
 for oof in oof_range:

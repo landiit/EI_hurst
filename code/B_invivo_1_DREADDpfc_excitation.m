@@ -1,11 +1,11 @@
 % B_invivo_1_DREADDpfc_excitation.m
 
 % add nonfractal toolbox to MATLAB path
-addpath /Users/mvlombardo/Dropbox/matlab/nonfractal-master/m;
+addpath /Users/mlombardo/Dropbox/matlab/nonfractal-master/m;
 
 %% load in pheno data
-rootpath = '/Users/mvlombardo/Dropbox/Manuscripts/AIMS_Hurst_Sex/reproAnalysis/DREADDexcitation';
-datapath = '/Users/mvlombardo/Dropbox/data/ag_EI_DREADD_data/DREADDexcitiation/raw';
+rootpath = '/Users/mlombardo/Dropbox/Manuscripts/AIMS_Hurst_Sex/reproAnalysis/DREADDexcitation';
+datapath = '/Users/mlombardo/Dropbox/data/ag_EI_DREADD_data/DREADDexcitiation/raw';
 pheno_path = fullfile(rootpath,'pheno');
 pdata = readtable(fullfile(pheno_path,'tidy_pheno_data.csv'),'delimiter',',');
 

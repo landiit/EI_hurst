@@ -13,13 +13,13 @@ knitr::opts_chunk$set(echo = TRUE)
 # load libraries you'll need
 library(easypackages)
 libraries("readxl","ggplot2","MASS","psych","here","heplots","ggseg","patchwork","knitr","matlabr")
-source("/Users/mvlombardo/Dropbox/GitHubRepos/utils/cohens_d.R")
+source(here("github_repo","code","cohens_d.R"))
 
 # FDR threshold to use
 fdr_thresh = 0.05
 
 # define paths
-codepath = here("code")
+codepath = here("github_repo","code")
 phenopath  = here("pheno")
 datapath = here("data")
 resultpath = here("pls_results")

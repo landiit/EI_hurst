@@ -1,8 +1,8 @@
 %% C_3a_AIMS_Hurst_PLS.m
 
-datapath = '/Users/mvlombardo/projects/EI_hurst/reproAnalysis/data/mrc_aims/Hurst_dwt';
-phenopath = '/Users/mvlombardo/projects/EI_hurst/reproAnalysis/pheno';
-plsrespath = '/Users/mvlombardo/projects/EI_hurst/reproAnalysis/pls_results';
+datapath = '/Users/mlombardo/Dropbox/Manuscripts/AIMS_Hurst_Sex/reproAnalysis/data/mrc_aims/Hurst_dwt';
+phenopath = '/Users/mlombardo/Dropbox/Manuscripts/AIMS_Hurst_Sex/reproAnalysis/pheno';
+plsrespath = '/Users/mlombardo/Dropbox/Manuscripts/AIMS_Hurst_Sex/reproAnalysis/pls_results';
 
 pdata = readtable(fullfile(phenopath,'tidy_data.csv'));
 mask = pdata.use_subs==1;

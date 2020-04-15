@@ -2,9 +2,7 @@
 
 This repository has all the code and tidy data for the analyses in Trakoshis et al., https://doi.org/10.1101/2020.01.16.909531
 
-The code directory has all of the code for running the primary analyses. The analyses are split into 3 sections A, B, and C, and these are denoted at the beginning of each filename. Section A is the code for running in-silico modeling of the Gao et al., model. The code for the recurrent network model is located here: https://github.com/pablomc88/EEG_proxy_from_network_point_neurons.  Section B is for running in-vivo DREADD analyses. Section C is for running analyses on human rsfMRI data. Other code that these main scripts depend on are also in this directory. Section D is for running the genomic analyses.
-
-The data directory houses tidy data generated for each step.
+The code directory has all of the code for running the primary analyses. The analyses are split into 4 sections A, B, C, and D, and these are denoted at the beginning of each filename. Section A is the code for running in-silico modeling for the Gao model and the recurrent model. The code for the recurrent network model is located here: https://github.com/pablomc88/EEG_proxy_from_network_point_neurons.  Section B is for running in-vivo DREADD analyses. Section C is for running analyses on human rsfMRI data. Section D is for the gene expression enrichment analyses. Other code that these main scripts depend on are also in this directory.
 
 
 ## Requirements
@@ -42,10 +40,15 @@ The data directory houses tidy data generated for each step.
 
   + **EIslope** (https://github.com/voytekresearch/EISlope) - Used for running <a href="https://www.sciencedirect.com/science/article/abs/pii/S1053811917305621?via%3Dihub">Gao et al., (2017)</a> model that simulates LFP data based on manipulations of excitation and inhibition.
 
+  + **PLS toolbox in MATLAB** (https://www.rotman-baycrest.on.ca/index.php?section=84) - Used for the PLS analysis on rsfMRI H data.
+
+
 
 ### In-silico modeling
 
-* `A_insilico_1_eisim.m` will run the model from <a href="https://www.sciencedirect.com/science/article/abs/pii/S1053811917305621?via%3Dihub">Gao et al., (2017)</a> that manipulates E:I ratio and then compute H on the simulated LFP data. H is computed with the `bfn_mfin_ml` function from `nonfractal`. This function is run as follows:
+* `A_insilico_0_analyze_recurrent_model.py` will run the steps for analyzing the recurrent model data. The data for this step is in the `data/recurrent_model` directory.
+
+* `A_insilico_1_eisim.m` will run the model from <a href="https://www.sciencedirect.com/science/article/abs/pii/S1053811917305621?via%3Dihub">Gao et al., (2017)</a> that manipulates E:I ratio and then compute H on the simulated LFP data. H is computed with the `bfn_mfin_ml` function from `nonfractal`. This function saves data into the `data/gao_model` directory and is run as follows:
 
   ```
   EI_ratio = [2:0.2:6];
@@ -53,17 +56,14 @@ The data directory houses tidy data generated for each step.
   result = A_insilico_1_eisim(EI_ratio, MAKE_PLOT);
   ```
 
-* `A_insilico_2_neural_ts_sim.py` will run the simulations to create LFP data based on 1/f slope. It can be run simply as shown below. This analysis requires python 3.6 or higher and utilizes the neurodsp library (https://neurodsp-tools.github.io/neurodsp/).
+* `A_insilico_2_neural_ts_sim.py` will run the simulations to create LFP data based on 1/f slope. It can be run simply as shown below. This analysis requires python 3.6 or higher and utilizes the neurodsp library (https://neurodsp-tools.github.io/neurodsp/). This is primarily used to simulate the data that gets used in Supplementary Figure 1D.
 
-  ```python A_insilico_2_neural_ts_sim.py```
+  `python A_insilico_2_neural_ts_sim.py`
 
-* `A_insilico_3_boldsim_neuralts_oof.m` will take the simulated LFP data from python in the previous step and will utilize it to compute H. It needs to be run as follows:
+* `A_insilico_3_boldsim_neuralts_oof.m` will take the simulated LFP data from python in the previous step and will utilize it to compute H. This is primarily used for data going into Supplementary Figure 1D. It needs to be run as follows:
 
-  ```
-  result = A_insilico_3_boldsim_neuralts_oof(0, 'oof');
-  ```
+  `result = A_insilico_3_boldsim_neuralts_oof(0, 'oof');``
 
-* `A_insilico_4_plot_sim_res.Rmd` runs in RStudio and will create an html report (found in the `code` directory) and basically creates the plots of the simulated data.
 
 ### In-vivo DREADD mouse rsfMRI analyses
 
@@ -82,3 +82,12 @@ The data directory houses tidy data generated for each step.
 ### Genomic analyses
 
 * `D_asd_risk_genes_dht_de_overlap.Rmd` runs in RStudio and does the main enrichment analyses between autism-associated genes in different cell types and DHT DE genes.
+
+
+### Figures
+
+There is a `Figures.Rmd` script that reproduces Figures 1-3 and Supplementary Figures 1-5. Figures 4 and 5 were constructed manually. All of these figures are in the `figures` directory.
+
+### Data
+
+Inside the `data` directory are subdirectories with the tidy data needed for the different aspects of the analyses. The names and filenames should be pretty self-explanatory and they get used at various points in the code.
