@@ -12,8 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(easypackages)
 libraries("here","ggplot2","reshape","ggpubr","ggrepel","forcats","patchwork","png","grid")
 
-datapath = here("github_repo","data","recurrent_model")
-figpath = here("github_repo","figures")
+datapath = here("data","recurrent_model")
+figpath = here("figures")
 ```
 
 # Figure 1
@@ -301,7 +301,7 @@ p1f
 
 # Put plots together
 p_final = (p1a | p1b | p1c) / (p1d | p1e | p1) / (p2 | p3) + plot_layout(heights =c(1,1,1.1))
-ggsave(filename = file.path(figpath,sprintf("Fig1.pdf",fstem_oof)), plot=p_final)
+ggsave(filename = file.path(figpath,"Fig1.pdf"), plot=p_final)
 p_final
 ```
 
@@ -517,7 +517,7 @@ p = p + geom_point(data = merged_data, aes(x = var, y = metric, colour = variabl
 p = p + geom_line(data = baseline_vth_H, aes(x = var, y = metric, colour = variable),linetype = "dotdash") +
         guides(data = baseline_vth_H, aes(x = var, y = metric, colour = FALSE))
 p = p + scale_x_reverse(breaks = round(seq(-51.5, -53, by = -0.5),1))
-p = p + xlab( expression(paste( V[th]," (mV)")) ) + ylab("H") + ggtitle("Hurst exponent (H)")
+p = p + xlab( expression(paste( V[th]," (mV)")) ) + ylab("H") + ggtitle(expression(paste("Voltage Threshold (", V[th],")")))
 p = p + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=FALSE)
 # p = p + theme(legend.title = element_blank(),legend.position = c(0.8, 0.2),legend.text = element_text(size=fontSize),legend.text.align = 0)
 # p = p + guides(color = guide_legend(override.aes = list(shape= NA,linetype = c("solid","solid","dotdash"),size=c(1,1,1))))
@@ -547,7 +547,7 @@ p = p + geom_point(data = merged_data, aes(x = var, y = metric, colour = variabl
 p = p + geom_line(data = baseline_EL_H, aes(x = var, y = metric, colour = variable),linetype = "dotdash") +
         guides(data = baseline_EL_H, aes(x = var, y = metric, colour = FALSE))
 # p = p + scale_x_reverse(breaks = round(seq(-51.5, -53, by = -0.5),1))
-p = p + xlab( expression(paste( E[L]," (mV)")) ) + ylab("H") + ggtitle("Hurst exponent (H)")
+p = p + xlab( expression(paste( E[L]," (mV)")) ) + ylab("H") + ggtitle(expression(paste("Resting Potential (", E[L],")")))
 p = p + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=FALSE)
 # p = p + theme(legend.title = element_blank(),legend.position = c(0.8, 0.2),legend.text = element_text(size=fontSize),legend.text.align = 0)
 # p = p + guides(color = guide_legend(override.aes = list(shape= NA,linetype = c("solid","solid","dotdash"),size=c(1,1,1))))
@@ -573,7 +573,7 @@ vol_inject_start = 970
 vol_treatment_start = vol_inject_start+900 
 
 # read in sliding-window analysis data
-datapath_dreadd = here("github_repo","data","dreadd")
+datapath_dreadd = here("data","dreadd")
 data_win = read.csv(file.path(datapath_dreadd,"pheno_data+Hwin_dreaddexcitation.csv"))
 
 # melt the data frame into long format
@@ -681,7 +681,7 @@ p = p + geom_smooth(se=TRUE, aes(group = interaction(condition,treatment_phase),
 # add other stuff to the plot
 p = p + geom_vline(xintercept = (vol_inject_start-window_size)) +
   geom_vline(xintercept = vol_treatment_start-window_size) +
-  ylab("Hurst Exponent (H)") +
+  ylab("H") +
   xlab("Time Window") + ggtitle("DREADD Silencing") + 
   scale_y_continuous(limits = yLims) + guides(colour=FALSE)
 
@@ -699,14 +699,14 @@ p
 
 # Put plots together
 p_final = (p3a | p3b) / (p3c | p3d)
-ggsave(filename = file.path(figpath,sprintf("Fig3.pdf",fstem_oof)), plot=p_final)
+ggsave(filename = file.path(figpath,"Fig3.pdf"), plot=p_final)
 p_final
 ```
 
 # Supp Figure 1
 ```{r, warning=FALSE, message=FALSE}
 fontSize = 8
-datapath_gao = here("github_repo","data","gao_model")
+datapath_gao = here("data","gao_model")
 
 fstem_oof = "oof"
 file2use = file.path(datapath_gao,sprintf("Hsim_%s.csv",fstem_oof))

@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, warning=FALSE, message=FALSE}
 # load libraries
 library(easypackages)
-libraries("readxl","ggplot2","MASS","psych","here","heplots","ggseg","patchwork","knitr")
+libraries("readxl","ggplot2","MASS","psych","here","heplots","patchwork","knitr","ggseg","ggsegExtra","tidyverse")
 source(here("github_repo","code","cohens_d.R"))
 
 # FDR threshold to use
@@ -264,7 +264,7 @@ rownames(output_res) = hcp_annot$area
 write.csv(output_res,file = file.path(resultpath,"Hurst_output_res.csv"))
 ```
 
-So now the moment of truth where the results are unveiled (drum roll please...).  Lets start by seeing if any regions were significant after FDR q<0.05 correction for a sex*diagnosis interaction.
+Show sex*diagnosis interaction
 
 ```{r, warning=FALSE, message=FALSE}
 tmp_res = output_res[order(output_res$Dx_x_Sex_fdrq),]
@@ -278,15 +278,23 @@ Plot sex*diagnosis interaction effect.
 yax_label = "Hurst exponent (H)"
 
 # show effect size throughout the entire brain
-g1 = ggseg(data = output_res, mapping=aes(fill = Dx_x_Sex_partialEtaSq), position = "stacked", atlas = "glasser") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Partial eta-sq")) +
+g1 = ggseg(.data=output_res, atlas=glasser, position="stacked",mapping=aes(fill=Dx_x_Sex_partialEtaSq)) +
+  theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Partial eta-sq"))+
   scale_fill_gradient2(midpoint=0.13/2, low="blue", mid="white", high="red", limits=c(0, 0.13), breaks = round(seq(from=0,to=0.12,by=0.03),2)) + guides(fill = guide_colourbar(nbin = 100))
+
+# g1 = ggseg(data = output_res, mapping=aes(fill = Dx_x_Sex_partialEtaSq), position = "stacked", atlas = "glasser") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Partial eta-sq")) +
+#   scale_fill_gradient2(midpoint=0.13/2, low="blue", mid="white", high="red", limits=c(0, 0.13), breaks = round(seq(from=0,to=0.12,by=0.03),2)) + guides(fill = guide_colourbar(nbin = 100))
 ggsave(filename = here("figures","sex_x_dx_interaction_Hurst_wholebrain.pdf"), plot = g1)
 g1
 
 # show the regions passing FDR q<0.05
 output_res_subset = subset(output_res, output_res$Dx_x_Sex_fdrq<=0.05)
-g2 = ggseg(data = output_res_subset, mapping=aes(fill = Dx_x_Sex_partialEtaSq), position = "stacked", atlas = "glasser") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Partial eta-sq")) +
+g2 = ggseg(.data=output_res_subsset, atlas=glasser, position="stacked",mapping=aes(fill=Dx_x_Sex_partialEtaSq)) +
+  theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Partial eta-sq"))+
   scale_fill_gradient2(midpoint=0.13/2, low="blue", mid="white", high="red", limits=c(0, 0.13), breaks = round(seq(from=0,to=0.12,by=0.03),2)) + guides(fill = guide_colourbar(nbin = 100))
+
+# g2 = ggseg(data = output_res_subset, mapping=aes(fill = Dx_x_Sex_partialEtaSq), position = "stacked", atlas = "glasser") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Partial eta-sq")) +
+#   scale_fill_gradient2(midpoint=0.13/2, low="blue", mid="white", high="red", limits=c(0, 0.13), breaks = round(seq(from=0,to=0.12,by=0.03),2)) + guides(fill = guide_colourbar(nbin = 100))
 ggsave(filename = here("figures","sex_x_dx_interaction_Hurst_fdr.pdf"), plot = g2)
 g2
 
@@ -344,9 +352,12 @@ reg_name = output_res$parcel_index[output_res$area==area_name]
 
 # ggseg plot to show the brain region
 output_res_subset = subset(output_res, output_res$area==area_name)
-g1 = ggseg(data = output_res_subset, mapping=aes(fill = r_ASDf_CF), 
-           position = "stacked", atlas = "glasser", show.legend = FALSE) + 
+g1 = ggseg(.data = output_res_subset, mapping=aes(fill = r_ASDf_CF), 
+           position = "stacked", atlas = glasser, show.legend = FALSE) + 
   ggtitle(area_descrip) + theme(plot.title = element_text(hjust = 0.5))
+# g1 = ggseg(data = output_res_subset, mapping=aes(fill = r_ASDf_CF), 
+#            position = "stacked", atlas = "glasser", show.legend = FALSE) + 
+#   ggtitle(area_descrip) + theme(plot.title = element_text(hjust = 0.5))
 
 # Scatterplot
 p1 = ggplot(data = asd_data, aes_string(x = "CF_PC1", y = reg_name, colour = "Sex", fill = "Sex"))
@@ -366,15 +377,27 @@ tmp_res = output_res[order(output_res$Sex_fdrq),]
 vars2use = c("area_descrip","Sex_Fstat","Sex_pval","Sex_fdrq","Sex_EffectSize_MvsF")
 kable(tmp_res[,vars2use])
 
-p1 = ggseg(data = output_res, mapping=aes(fill=Sex_EffectSize_MvsF), position="stacked", atlas="glasser") + 
+p1 = ggseg(.data = output_res, mapping=aes(fill=Sex_EffectSize_MvsF), position="stacked", atlas=glasser) + 
   ggtitle("Sex Difference (unthresholded)") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Cohen's d")) +
   scale_fill_gradient2(midpoint=0.35, low="blue", mid="white", high="red", limits=c(0, 0.85), breaks = round(seq(from=0,to=0.8,by=0.2),1)) + guides(fill = guide_colourbar(nbin = 100))
+# p1 = ggseg(data = output_res, mapping=aes(fill=Sex_EffectSize_MvsF), position="stacked", atlas="glasser") + 
+#   ggtitle("Sex Difference (unthresholded)") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Cohen's d")) +
+#   scale_fill_gradient2(midpoint=0.35, low="blue", mid="white", high="red", limits=c(0, 0.85), breaks = round(seq(from=0,to=0.8,by=0.2),1)) + guides(fill = guide_colourbar(nbin = 100))
 
 # Sex main effect regions surviving FDR q<0.05
 output_res_subset = subset(output_res, output_res$Sex_fdrq<=0.05)
-p2 = ggseg(data = output_res_subset, mapping=aes(fill=Sex_EffectSize_MvsF), position="stacked", atlas="glasser") + 
-  ggtitle("Sex Difference (FDR q<0.05)") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Cohen's d")) +
-  scale_fill_gradient2(midpoint=0.35, low="blue", mid="white", high="red", limits=c(0, 0.85), breaks = round(seq(from=0,to=0.8,by=0.2),1)) + guides(fill = guide_colourbar(nbin = 100))
+p2 = ggseg(.data = output_res_subset, 
+           mapping=aes(fill=Sex_EffectSize_MvsF), 
+           position="stacked", 
+           atlas=glasser) + 
+  ggtitle("Sex Difference (FDR q<0.05)") + 
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title="Cohen's d")) +
+  scale_fill_gradient2(midpoint=0.35, low="blue", mid="white", high="red", limits=c(0, 0.85), breaks = round(seq(from=0,to=0.8,by=0.2),1)) + 
+  guides(fill = guide_colourbar(nbin = 100))
+# p2 = ggseg(data = output_res_subset, mapping=aes(fill=Sex_EffectSize_MvsF), position="stacked", atlas="glasser") + 
+#   ggtitle("Sex Difference (FDR q<0.05)") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Cohen's d")) +
+#   scale_fill_gradient2(midpoint=0.35, low="blue", mid="white", high="red", limits=c(0, 0.85), breaks = round(seq(from=0,to=0.8,by=0.2),1)) + guides(fill = guide_colourbar(nbin = 100))
 
 p_final = p1 + p2 + plot_layout(nrow=2, ncol=1)
 ggsave(filename = file.path(here(),"figures","sex_maineffects_unthresholded_Hurst.pdf"), plot = p_final)
@@ -388,8 +411,17 @@ tmp_res = output_res[order(output_res$Dx_fdrq),]
 vars2use = c("area_descrip","Dx_Fstat","Dx_pval","Dx_fdrq","Dx_EffectSize_TDvsASD")
 kable(tmp_res[,vars2use])
 
-p = ggseg(data = output_res, mapping=aes(fill=Dx_EffectSize_TDvsASD), position="stacked", atlas="glasser") + 
-  ggtitle("Diagnosis Main Effect (unthresholded)") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Cohen's d")) + scale_fill_gradient2(midpoint=0, low="blue", mid="white", high="red", limits=c(-0.65, 0.65), breaks = round(seq(from=-0.6,to=0.6,by=0.3),1)) + guides(fill = guide_colourbar(nbin = 100)) 
+p = ggseg(.data = output_res, 
+          mapping=aes(fill=Dx_EffectSize_TDvsASD), 
+          position="stacked", 
+          atlas=glasser) + 
+  ggtitle("Diagnosis Main Effect (unthresholded)") + 
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title="Cohen's d")) + 
+  scale_fill_gradient2(midpoint=0, low="blue", mid="white", high="red", limits=c(-0.65, 0.65), breaks = round(seq(from=-0.6,to=0.6,by=0.3),1)) + 
+  guides(fill = guide_colourbar(nbin = 100)) 
+# p = ggseg(data = output_res, mapping=aes(fill=Dx_EffectSize_TDvsASD), position="stacked", atlas="glasser") + 
+#   ggtitle("Diagnosis Main Effect (unthresholded)") + theme(plot.title = element_text(hjust = 0.5)) + guides(fill=guide_legend(title="Cohen's d")) + scale_fill_gradient2(midpoint=0, low="blue", mid="white", high="red", limits=c(-0.65, 0.65), breaks = round(seq(from=-0.6,to=0.6,by=0.3),1)) + guides(fill = guide_colourbar(nbin = 100)) 
 
 ggsave(filename = file.path(here(),"figures","diagnosis_maineffects_unthresholded_Hurst.pdf"), plot = p)
 p
