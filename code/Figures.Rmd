@@ -86,7 +86,7 @@ LFP_all$variable = factor(LFP_all$variable, levels = c("g=5.65","g=14.8"))
 p1b = ggplot(data = LFP_all, aes(x = time, y = LFP, colour=variable)) + 
   facet_grid(variable ~ .) + 
   geom_line(size=0.25) + 
-  scale_colour_manual(values = c("dodger blue","deep sky blue")) + guides(colour=FALSE) + 
+  scale_colour_manual(values = c("dodger blue","#ff8d1e")) + guides(colour=FALSE) + 
   ylim(-2,10) + 
   ylab(" ") + 
   xlab("Time (ms)") + 
@@ -126,7 +126,7 @@ p = p + theme(plot.title = element_text(hjust = 0.5))
 # p = p + theme(legend.title = element_blank(),legend.position = c(0.25, 0.25),legend.text = element_text(size=fontSize),legend.text.align = 0)
 # p = p + guides(color = guide_legend(override.aes = list(shape= NA,linetype = c("dashed","solid","solid"),size=c(0.5,1,1))))
 p = p + guides(colour = FALSE)
-p = p + scale_colour_manual(values = c("black","dodger blue","deep sky blue"),labels = legend_labels_PSD)
+p = p + scale_colour_manual(values = c("black","dodger blue","#ff8d1e"),labels = legend_labels_PSD)
 p = p + scale_x_log10() + scale_y_log10()
 p = p + theme(axis.text.x = element_text(size=fontSize),
         axis.text.y = element_text(size=fontSize),
@@ -863,7 +863,7 @@ p = p + theme(plot.title = element_text(hjust = 0.5))
 # p = p + theme(legend.title = element_blank(),legend.position = c(0.25, 0.25),legend.text = element_text(size=fontSize),legend.text.align = 0)
 # p = p + guides(color = guide_legend(override.aes = list(shape= NA,linetype = c("dashed","solid","solid"),size=c(0.5,1,1))))
 p = p + guides(colour = FALSE)
-p = p + scale_colour_manual(values = c("black","dodger blue","deep sky blue"),labels = legend_labels_PSD)
+p = p + scale_colour_manual(values = c("black","dodger blue","#ff8d1e"),labels = legend_labels_PSD)
 p = p + scale_x_log10() + scale_y_log10()
 p = p + theme(axis.text.x = element_text(size=fontSize),
         axis.text.y = element_text(size=fontSize),
@@ -958,7 +958,7 @@ LFP_all$variable = factor(LFP_all$variable, levels = c("g=5.65","g=14.8"))
 p1b = ggplot(data = LFP_all, aes(x = time, y = LFP, colour=variable)) + 
   facet_grid(variable ~ .) + 
   geom_line(size=0.5) + 
-  scale_colour_manual(values = c("dodger blue","deep sky blue")) + guides(colour=FALSE) + 
+  scale_colour_manual(values = c("dodger blue","#ff8d1e")) + guides(colour=FALSE) + 
   ylim(-2,10) + 
   ylab(" ") + 
   xlab("Time (ms)") + 
@@ -988,7 +988,7 @@ p2 = ggplot()
 p1 = p1 + geom_line(data = HRF, aes(x = time, y = HRF, colour = 'black'),size = 1) 
 p2 = p2 + geom_line(data = merged_data_2, aes(x = fx, y = PSD, colour = variable),size = 1) 
 
-p1 = p1 + xlab("Time (ms)") + ggtitle("HRF")
+p1 = p1 + xlab("Time (sec)") + ggtitle("HRF")
 p1 = p1 + theme(plot.title = element_text(hjust = 0.5)) + guides(color=FALSE)
 
 p2 = p2 + xlab("Frequency (Hz)") + ggtitle("FFTs of convolution kernels")
@@ -1044,7 +1044,7 @@ p = p + theme(plot.title = element_text(hjust = 0.5))
 # p = p + theme(legend.title = element_blank(),legend.position = c(0.25, 0.25),legend.text = element_text(size=fontSize),legend.text.align = 0)
 # p = p + guides(color = guide_legend(override.aes = list(shape= NA,linetype = c("dashed","solid","solid"),size=c(0.5,1,1))))
 p = p + guides(colour = FALSE)
-p = p + scale_colour_manual(values = c("black","dodger blue","deep sky blue"))#,labels = legend_labels_PSD)
+p = p + scale_colour_manual(values = c("black","dodger blue","#ff8d1e"))#,labels = legend_labels_PSD)
 p = p + scale_x_log10() + scale_y_log10()
 p = p + theme(axis.text.x = element_text(size=fontSize),
         axis.text.y = element_text(size=fontSize),
@@ -1067,7 +1067,7 @@ p2 = ggplot()
 p1 = p1 + geom_line(data = BOLD_1, aes(x = time, y = BOLD, colour = variable),size = 1)
 p2 = p2 + geom_line(data = BOLD_2, aes(x = time, y = BOLD, colour = variable),size = 1)
 
-p1 = p1  + xlab("Time (s)") + ggtitle("Recovered BOLD signals") + ylim(-2,1) + guides(colour=FALSE)
+p1 = p1  + xlab("Time (s)") + ggtitle("Simulated BOLD signals") + ylim(-2,1) + guides(colour=FALSE)
 p1 = p1 + theme(plot.title = element_text(hjust = 0.5))
 
 p2 = p2 + xlab("Time (s)") + ylim(-2,1) + guides(colour=FALSE)
@@ -1077,7 +1077,7 @@ p2 = p2 + theme(plot.title = element_text(hjust = 0.5))
 # p2 = p2 + theme(legend.title = element_blank(),legend.position = c(0.85, 0.25),legend.text = element_text(size=fontSize),legend.text.align = 0)
 
 p1 = p1 + scale_colour_manual(values = c("dodger blue"),labels = c(expression(g == 6.3)))
-p2 = p2 + scale_colour_manual(values = c("deep sky blue"),labels = c(expression(g == 13.4)))
+p2 = p2 + scale_colour_manual(values = c("#ff8d1e"),labels = c(expression(g == 13.4)))
 
 p1 = p1 + theme(axis.text.x = element_text(size=fontSize),
         axis.text.y = element_text(size=fontSize),
@@ -1112,7 +1112,7 @@ p1 = p1 + ylab("Normalized FFTs of BOLD signals")
 p1 = p1 + ggtitle("Without high-pass filter")
 p1 = p1 + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=FALSE)
 # p1 = p1 + theme(legend.title = element_blank(),legend.position = c(0.75, 0.65),legend.text = element_text(size=fontSize),legend.text.align = 0)
-p1 = p1 + scale_colour_manual(values = c("dodger blue","deep sky blue"),labels = c(expression(g == 6.3),expression(g == 13.4)))
+p1 = p1 + scale_colour_manual(values = c("dodger blue","#ff8d1e"),labels = c(expression(g == 6.3),expression(g == 13.4)))
 
 p1 = p1 + theme(axis.text.x = element_text(size=fontSize),
         axis.text.y = element_text(size=fontSize),
@@ -1139,7 +1139,7 @@ p1 = p1 + xlab("Frequency (Hz)") + ylab("Normalized FFTs of BOLD signals")
 p1 = p1 + ggtitle("With high-pass filter")
 p1 = p1 + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=FALSE)
 # p1 = p1 + theme(legend.title = element_blank(),legend.position = c(0.75, 0.65),legend.text = element_text(size=fontSize),legend.text.align = 0)
-p1 = p1 + scale_colour_manual(values = c("dodger blue","deep sky blue"),labels = c(expression(g == 6.3),expression(g == 13.4)))
+p1 = p1 + scale_colour_manual(values = c("dodger blue","#ff8d1e"),labels = c(expression(g == 6.3),expression(g == 13.4)))
 
 p1 = p1 + theme(axis.text.x = element_text(size=fontSize),
         axis.text.y = element_text(size=fontSize),
