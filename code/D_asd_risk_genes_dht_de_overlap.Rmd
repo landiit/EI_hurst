@@ -8,11 +8,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, warning=FALSE, message=FALSE}
-easypackages::libraries("here","ggplot2","gplots")
+easypackages::libraries("here","ggplot2","gplots","ggseg","ggsegExtra","tidyverse","matlabr")
 code_dir = here("code")
 source(file.path(code_dir,"genelistOverlap.R"))
 
-genelist_dir = here("EI_hurst","data","asd_genelists")
+genelist_dir = here("data","asd_genelists")
 
 backgroundTotal = 13284
 dht_de_genes = read.delim(file.path(genelist_dir,"dysreg_sv_limma_FDR_q0.05_resultTable.txt"))
@@ -108,7 +108,7 @@ sort(overlap_AsOPCRisk_res[[1]]$overlapping_genes)
 ## Make a heatmap of overlapping DHT and autism-associated excitatory genes
 
 ```{r, warning=FALSE, message=FALSE}
-df = read.csv(here("EI_hurst","data","overlap_dht_de_data.csv"),row.names=1)
+df = read.csv(here("data","asd_genelists","overlap_dht_de_data.csv"),row.names=1)
 df = as.matrix(df)
 
 # plot the heatmap of the data matrix
@@ -118,4 +118,30 @@ heatmap.2(df,
           scale="row", 
           trace="none",
           srtCol = 25)
+```
+
+## Plot percent overlap between HCP parc regions and FDR q<0.01 DHT DE and ASD E genes map
+
+```{r, warning=FALSE, message=FALSE}
+options(matlab.path = "/Applications/MATLAB_R2019b.app/bin")
+
+RUN_MATLAB = TRUE
+if (RUN_MATLAB){
+  code2run = sprintf("cd %s; calculate_overlap_hcpParc_dhtasdEmap;",code_dir)
+  res = run_matlab_code(code2run)
+} # if (RUN_MATLAB)
+
+dir2use = here("data","ge_maps")
+df2plot = read.csv(file.path(dir2use,"hcp_fdr01_percent_overlap.csv"))
+
+# show effect size throughout the entire brain
+g1 = ggseg(.data=df2plot, 
+           atlas=glasser, 
+           position="stacked",
+           mapping=aes(fill=percent_overlap)) +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  guides(fill=guide_legend(title="% Overlap")) +
+  scale_fill_gradientn(colors = colorRampPalette(c("blue","white","red"))(100),limits=c(0,100)) + 
+  guides(fill = guide_colourbar(nbin = 100))
+g1
 ```
