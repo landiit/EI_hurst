@@ -1,6 +1,6 @@
 # Code and data for EI Hurst paper
 
-This repository has all the code and tidy data for the analyses in Trakoshis et al., https://doi.org/10.1101/2020.01.16.909531
+This repository has all the code and tidy data for the analyses in Trakoshis, Martínez-Cañada et al., Intrinsic excitation-inhibition imbalance affects medial prefrontal cortex differently in autistic men versus women. https://doi.org/10.1101/2020.01.16.909531
 
 The code directory has all of the code for running the primary analyses. The analyses are split into 4 sections A, B, C, and D, and these are denoted at the beginning of each filename. Section A is the code for running in-silico modeling for the Gao model and the recurrent model. The code for the recurrent network model is located here: https://github.com/pablomc88/EEG_proxy_from_network_point_neurons.  Section B is for running in-vivo DREADD analyses. Section C is for running analyses on human rsfMRI data. Section D is for the gene expression enrichment analyses. Other code that these main scripts depend on are also in this directory.
 
